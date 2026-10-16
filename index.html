@@ -38,20 +38,17 @@
   <div id="introPage">
     <h1>一 App 即中！</h1>
     <div class="subtitle">App 耆蹤大冒險 · 長者手機問答遊戲</div>
-
     <div class="hero">
       <div class="hero-emoji">🧑‍🦳📱🎉</div>
       <div class="hero-text">睇 Logo · 猜 App · 學生活</div>
       <div class="hero-sub">一齊做數碼生活小達人！</div>
     </div>
-
     <div class="badges">
       <div class="badge">💬 傾偈</div>
       <div class="badge">🗺️ 搵路</div>
       <div class="badge">🌤️ 睇天氣</div>
       <div class="badge">📷 影相</div>
     </div>
-
     <button class="primary orange" onclick="showQRPage()">📱 開始冒險：睇 QR Code</button>
     <button class="primary green" onclick="startGame()">▶️ 直接開始遊戲</button>
     <div class="note">唔使急，一齊慢慢玩、慢慢學！</div>
@@ -85,7 +82,7 @@
 
 </div>
 <script>
-const questions = [{"logo": "💬", "color": "#25D366", "name": "WhatsApp", "q": "呢個 App 可以同屋企人傾偈、傳相同視像通話，佢係邊個？", "options": ["WhatsApp", "Google Maps", "八達通"], "answer": 0}, {"logo": "▶️", "color": "#FF0000", "name": "YouTube", "q": "呢個 App 可以睇粵曲、新聞同教學影片，佢係邊個？", "options": ["YouTube", "相機", "日曆"], "answer": 0}, {"logo": "🌤️", "color": "#29B6F6", "name": "香港天文台", "q": "呢個 App 可以睇會唔會落雨同颱風消息，佢係邊個？", "options": ["香港天文台", "WhatsApp", "Facebook"], "answer": 0}, {"logo": "🗺️", "color": "#4285F4", "name": "Google Maps", "q": "呢個 App 可以幫你搵路、去酒樓同搭巴士，佢係邊個？", "options": ["Google Maps", "相機", "鬧鐘"], "answer": 0}, {"logo": "🚇", "color": "#F57C00", "name": "八達通", "q": "呢個 App 可以拍卡搭車同買嘢，佢係邊個？", "options": ["八達通", "YouTube", "電話"], "answer": 0}, {"logo": "⏰", "color": "#673AB7", "name": "鬧鐘", "q": "呢個 App 可以朝早叫你起身，佢係邊個？", "options": ["鬧鐘", "Google Maps", "銀行 App"], "answer": 0}, {"logo": "📅", "color": "#0F9D58", "name": "日曆", "q": "呢個 App 可以睇今日幾號同記住覆診，佢係邊個？", "options": ["日曆", "相機", "八達通"], "answer": 0}, {"logo": "🏦", "color": "#00695C", "name": "銀行 App", "q": "呢個 App 可以查銀行戶口結餘，佢係邊個？", "options": ["銀行 App", "YouTube", "WhatsApp"], "answer": 0}, {"logo": "🏥", "color": "#0072C6", "name": "醫管局 App", "q": "呢個 App 可以預約醫院服務同睇醫療資訊，佢係邊個？", "options": ["醫管局 App", "Facebook", "相機"], "answer": 0}, {"logo": "📷", "color": "#455A64", "name": "相機", "q": "呢個 App 可以影低孫仔孫女嘅相，佢係邊個？", "options": ["相機", "日曆", "Google Maps"], "answer": 0}];
+const questions = [{"logo": "💬", "color": "#25D366", "name": "WhatsApp", "q": "呢個 App 可以同屋企人傾偈、傳相同視像通話，佢係邊個？", "options": ["WhatsApp", "Google Maps", "八達通"], "answer": 0}, {"logo": "▶️", "color": "#FF0000", "name": "YouTube", "q": "呢個 App 可以睇粵曲、新聞同教學影片，佢係邊個？", "options": ["相機", "YouTube", "日曆"], "answer": 1}, {"logo": "🌤️", "color": "#29B6F6", "name": "香港天文台", "q": "呢個 App 可以睇會唔會落雨同颱風消息，佢係邊個？", "options": ["WhatsApp", "Facebook", "香港天文台"], "answer": 2}, {"logo": "🗺️", "color": "#4285F4", "name": "Google Maps", "q": "呢個 App 可以幫你搵路、去酒樓同搭巴士，佢係邊個？", "options": ["Google Maps", "相機", "鬧鐘"], "answer": 0}, {"logo": "🚇", "color": "#F57C00", "name": "八達通", "q": "呢個 App 可以拍卡搭車同買嘢，佢係邊個？", "options": ["YouTube", "八達通", "電話"], "answer": 1}, {"logo": "⏰", "color": "#673AB7", "name": "鬧鐘", "q": "呢個 App 可以朝早叫你起身，佢係邊個？", "options": ["Google Maps", "銀行 App", "鬧鐘"], "answer": 2}, {"logo": "📅", "color": "#0F9D58", "name": "日曆", "q": "呢個 App 可以睇今日幾號同記住覆診，佢係邊個？", "options": ["相機", "日曆", "八達通"], "answer": 1}, {"logo": "🏦", "color": "#00695C", "name": "銀行 App", "q": "呢個 App 可以查銀行戶口結餘，佢係邊個？", "options": ["銀行 App", "YouTube", "WhatsApp"], "answer": 0}, {"logo": "🏥", "color": "#0072C6", "name": "醫管局 App", "q": "呢個 App 可以預約醫院服務同睇醫療資訊，佢係邊個？", "options": ["Facebook", "相機", "醫管局 App"], "answer": 2}, {"logo": "📷", "color": "#455A64", "name": "相機", "q": "呢個 App 可以影低孫仔孫女嘅相，佢係邊個？", "options": ["日曆", "相機", "Google Maps"], "answer": 1}];
 let current = 0, score = 0, answered = false;
 
 function showPage(id) {
@@ -94,14 +91,8 @@ function showPage(id) {
   document.getElementById(id).classList.remove("hidden");
 }
 
-function showQRPage() {
-  showPage("qrPage");
-  showIntroQR();
-}
-
-function backToIntro() {
-  showPage("introPage");
-}
+function showQRPage() { showPage("qrPage"); showIntroQR(); }
+function backToIntro() { showPage("introPage"); }
 
 function showIntroQR() {
   const url = encodeURIComponent(window.location.href);

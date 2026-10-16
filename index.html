@@ -7,10 +7,10 @@
 <style>
   body { font-family:"Microsoft JhengHei","PingFang HK",sans-serif; background:linear-gradient(180deg,#fff8e1,#e3f2fd); margin:0; padding:16px; color:#111; }
   .card { background:#fff; border-radius:28px; padding:26px; max-width:680px; margin:0 auto; box-shadow:0 6px 20px rgba(0,0,0,.15); }
-  h1 { color:#1f4e79; font-size:46px; margin:0 0 8px; text-align:center; letter-spacing:2px; }
-  .subtitle { font-size:23px; font-weight:bold; color:#2e7d32; text-align:center; margin-bottom:18px; }
+  h1 { color:#1f4e79; font-size:44px; margin:0 0 8px; text-align:center; }
+  .subtitle { font-size:22px; font-weight:bold; color:#2e7d32; text-align:center; margin-bottom:18px; }
   .hero { text-align:center; margin:10px 0 18px; }
-  .hero-emoji { font-size:88px; line-height:1; }
+  .hero-emoji { font-size:80px; line-height:1; }
   .hero-text { font-size:26px; font-weight:bold; color:#1f4e79; margin-top:10px; }
   .hero-sub { font-size:20px; color:#555; margin-top:6px; }
   .badges { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin:16px 0 20px; }
@@ -30,6 +30,7 @@
   .qr img { max-width:100%; width:320px; border:10px solid #fff; border-radius:14px; box-shadow:0 3px 10px rgba(0,0,0,.15); }
   .note { font-size:19px; color:#555; margin-top:12px; text-align:center; }
   .back { background:#ef6c00; }
+  .music { font-size:22px; font-weight:bold; background:#fff; color:#1f4e79; border:3px solid #1f4e79; border-radius:999px; padding:12px 18px; margin:12px auto 0; display:block; }
 </style>
 </head>
 <body>
@@ -49,21 +50,22 @@
       <div class="badge">🌤️ 睇天氣</div>
       <div class="badge">📷 影相</div>
     </div>
+    <button class="music" onclick="toggleMusic()">🎵 開／關柔和背景音樂</button>
     <button class="primary orange" onclick="showQRPage()">📱 開始冒險：睇 QR Code</button>
     <button class="primary green" onclick="startGame()">▶️ 直接開始遊戲</button>
-    <div class="note">唔使急，一齊慢慢玩、慢慢學！</div>
+    <div class="note">共 15 題。柔和背景音樂只會在首頁播放。</div>
   </div>
 
   <div id="qrPage" class="hidden">
     <h1>掃一掃</h1>
     <div class="subtitle">用手機掃描 QR Code，即刻開始「一 App 即中！」</div>
     <div class="qr">
-      <img id="introQrImg" alt="QR Code">
+      <img id="qrImg" alt="QR Code">
       <div class="note">如 QR Code 未顯示，請按下方按鈕重新生成。</div>
     </div>
-    <button class="primary" onclick="showIntroQR()">🔄 重新生成 QR Code</button>
+    <button class="primary" onclick="makeQR()">🔄 重新生成 QR Code</button>
     <button class="primary green" onclick="startGame()">▶️ 直接開始遊戲</button>
-    <button class="primary back" onclick="backToIntro()">⬅️ 返回首頁</button>
+    <button class="primary back" onclick="showIntro()">⬅️ 返回首頁</button>
   </div>
 
   <div id="gameArea" class="hidden">
@@ -74,84 +76,193 @@
     <div class="question" id="question"></div>
     <div id="options"></div>
     <div class="feedback" id="feedback"></div>
-    <button class="primary hidden" id="next" onclick="nextQuestion()">下一題 →</button>
-    <button class="primary green hidden" id="restart" onclick="restart()">再玩一次</button>
-    <button class="primary back hidden" id="homeBtn" onclick="backToIntro()">⬅️ 返回首頁</button>
+    <button class="primary hidden" id="nextBtn" onclick="nextQuestion()">下一題 →</button>
+    <button class="primary green hidden" id="restartBtn" onclick="restartGame()">再玩一次</button>
+    <button class="primary back hidden" id="homeBtn" onclick="showIntro()">⬅️ 返回首頁</button>
     <div class="note">唔緊要，慢慢揀；揀錯都可以再學。</div>
   </div>
 
 </div>
+
 <script>
-const questions = [{"logo": "💬", "color": "#25D366", "name": "WhatsApp", "q": "呢個 App 可以同屋企人傾偈、傳相同視像通話，佢係邊個？", "options": ["WhatsApp", "Google Maps", "八達通"], "answer": 0}, {"logo": "▶️", "color": "#FF0000", "name": "YouTube", "q": "呢個 App 可以睇粵曲、新聞同教學影片，佢係邊個？", "options": ["相機", "YouTube", "日曆"], "answer": 1}, {"logo": "🌤️", "color": "#29B6F6", "name": "香港天文台", "q": "呢個 App 可以睇會唔會落雨同颱風消息，佢係邊個？", "options": ["WhatsApp", "Facebook", "香港天文台"], "answer": 2}, {"logo": "🗺️", "color": "#4285F4", "name": "Google Maps", "q": "呢個 App 可以幫你搵路、去酒樓同搭巴士，佢係邊個？", "options": ["Google Maps", "相機", "鬧鐘"], "answer": 0}, {"logo": "🚇", "color": "#F57C00", "name": "八達通", "q": "呢個 App 可以拍卡搭車同買嘢，佢係邊個？", "options": ["YouTube", "八達通", "電話"], "answer": 1}, {"logo": "⏰", "color": "#673AB7", "name": "鬧鐘", "q": "呢個 App 可以朝早叫你起身，佢係邊個？", "options": ["Google Maps", "銀行 App", "鬧鐘"], "answer": 2}, {"logo": "📅", "color": "#0F9D58", "name": "日曆", "q": "呢個 App 可以睇今日幾號同記住覆診，佢係邊個？", "options": ["相機", "日曆", "八達通"], "answer": 1}, {"logo": "🏦", "color": "#00695C", "name": "銀行 App", "q": "呢個 App 可以查銀行戶口結餘，佢係邊個？", "options": ["銀行 App", "YouTube", "WhatsApp"], "answer": 0}, {"logo": "🏥", "color": "#0072C6", "name": "醫管局 App", "q": "呢個 App 可以預約醫院服務同睇醫療資訊，佢係邊個？", "options": ["Facebook", "相機", "醫管局 App"], "answer": 2}, {"logo": "📷", "color": "#455A64", "name": "相機", "q": "呢個 App 可以影低孫仔孫女嘅相，佢係邊個？", "options": ["日曆", "相機", "Google Maps"], "answer": 1}];
-let current = 0, score = 0, answered = false;
+var questions = [{"logo": "💬", "color": "#25D366", "name": "WhatsApp", "q": "呢個 App 可以同屋企人傾偈、傳相同視像通話，佢係邊個？", "options": ["WhatsApp", "Google Maps", "八達通"], "answer": 0}, {"logo": "▶️", "color": "#FF0000", "name": "YouTube", "q": "呢個 App 可以睇粵曲、新聞同教學影片，佢係邊個？", "options": ["相機", "YouTube", "日曆"], "answer": 1}, {"logo": "🌤️", "color": "#29B6F6", "name": "香港天文台", "q": "呢個 App 可以睇會唔會落雨同颱風消息，佢係邊個？", "options": ["WhatsApp", "Facebook", "香港天文台"], "answer": 2}, {"logo": "🗺️", "color": "#4285F4", "name": "Google Maps", "q": "呢個 App 可以幫你搵路、去酒樓同搭巴士，佢係邊個？", "options": ["Google Maps", "相機", "鬧鐘"], "answer": 0}, {"logo": "🚇", "color": "#F57C00", "name": "八達通", "q": "呢個 App 可以拍卡搭車同買嘢，佢係邊個？", "options": ["YouTube", "八達通", "電話"], "answer": 1}, {"logo": "⏰", "color": "#673AB7", "name": "鬧鐘", "q": "呢個 App 可以朝早叫你起身，佢係邊個？", "options": ["Google Maps", "銀行 App", "鬧鐘"], "answer": 2}, {"logo": "📅", "color": "#0F9D58", "name": "日曆", "q": "呢個 App 可以睇今日幾號同記住覆診，佢係邊個？", "options": ["相機", "日曆", "八達通"], "answer": 1}, {"logo": "🏦", "color": "#00695C", "name": "銀行 App", "q": "呢個 App 可以查銀行戶口結餘，佢係邊個？", "options": ["銀行 App", "YouTube", "WhatsApp"], "answer": 0}, {"logo": "🏥", "color": "#0072C6", "name": "醫管局 App", "q": "呢個 App 可以預約醫院服務同睇醫療資訊，佢係邊個？", "options": ["Facebook", "相機", "醫管局 App"], "answer": 2}, {"logo": "📷", "color": "#455A64", "name": "相機", "q": "呢個 App 可以影低孫仔孫女嘅相，佢係邊個？", "options": ["日曆", "相機", "Google Maps"], "answer": 1}, {"logo": "📞", "color": "#34A853", "name": "電話", "q": "呢個 App 可以打畀屋企人、聽電話，佢係邊個？", "options": ["電話", "Facebook", "日曆"], "answer": 0}, {"logo": "🛒", "color": "#FF6F00", "name": "網購 App", "q": "呢個 App 可以買嘢、睇貨品同落單，佢係邊個？", "options": ["相機", "網購 App", "Google Maps"], "answer": 1}, {"logo": "🎵", "color": "#1DB954", "name": "音樂 App", "q": "呢個 App 可以聽歌、聽粵曲同懷舊金曲，佢係邊個？", "options": ["音樂 App", "八達通", "相機"], "answer": 0}, {"logo": "🚌", "color": "#F9A825", "name": "巴士 App", "q": "呢個 App 可以查巴士幾時到站，佢係邊個？", "options": ["日曆", "WhatsApp", "巴士 App"], "answer": 2}, {"logo": "🧭", "color": "#3949AB", "name": "指南針", "q": "呢個 App 可以幫你分辨東南西北，佢係邊個？", "options": ["指南針", "YouTube", "銀行 App"], "answer": 0}];
+var current = 0;
+var score = 0;
+var answered = false;
+var musicOn = false;
+var musicTimer = null;
+var audioCtx = null;
 
 function showPage(id) {
-  ["introPage","qrPage","gameArea"].forEach(p =>
-    document.getElementById(p).classList.add("hidden"));
+  document.getElementById("introPage").classList.add("hidden");
+  document.getElementById("qrPage").classList.add("hidden");
+  document.getElementById("gameArea").classList.add("hidden");
   document.getElementById(id).classList.remove("hidden");
+  if (id !== "introPage") {
+    stopMusic();
+  }
 }
 
-function showQRPage() { showPage("qrPage"); showIntroQR(); }
-function backToIntro() { showPage("introPage"); }
+function showIntro() {
+  showPage("introPage");
+}
 
-function showIntroQR() {
-  const url = encodeURIComponent(window.location.href);
-  document.getElementById("introQrImg").src =
-    "https://api.qrserver.com/v1/create-qr-code/?size=360x360&margin=10&data=" + url;
+function showQRPage() {
+  showPage("qrPage");
+  makeQR();
+}
+
+function makeQR() {
+  var url = window.location.href;
+  var api = "https://api.qrserver.com/v1/create-qr-code/?size=360x360&margin=10&data=" + encodeURIComponent(url);
+  document.getElementById("qrImg").src = api;
 }
 
 function startGame() {
-  current = 0; score = 0;
+  current = 0;
+  score = 0;
   showPage("gameArea");
   showQuestion();
 }
 
 function showQuestion() {
   answered = false;
-  document.getElementById("feedback").textContent = "";
-  document.getElementById("next").classList.add("hidden");
-  document.getElementById("restart").classList.add("hidden");
+  document.getElementById("feedback").innerHTML = "";
+  document.getElementById("nextBtn").classList.add("hidden");
+  document.getElementById("restartBtn").classList.add("hidden");
   document.getElementById("homeBtn").classList.add("hidden");
-  document.getElementById("progress").textContent = `第 ${current + 1} / ${questions.length} 題`;
-  const q = questions[current];
-  const logo = document.getElementById("logo");
-  logo.textContent = q.logo;
+  document.getElementById("progress").innerHTML = "第 " + (current + 1) + " / " + questions.length + " 題";
+
+  var q = questions[current];
+  var logo = document.getElementById("logo");
+  logo.innerHTML = q.logo;
   logo.style.background = q.color;
-  document.getElementById("question").textContent = q.q;
-  const box = document.getElementById("options");
+  document.getElementById("question").innerHTML = q.q;
+
+  var box = document.getElementById("options");
   box.innerHTML = "";
-  q.options.forEach((opt, i) => {
-    const b = document.createElement("button");
+
+  for (var i = 0; i < q.options.length; i++) {
+    var b = document.createElement("button");
     b.className = "option";
-    b.textContent = opt;
-    b.onclick = () => choose(i, b);
+    b.innerHTML = q.options[i];
+    b.onclick = makeChooseHandler(i);
     box.appendChild(b);
-  });
+  }
 }
 
-function choose(i, btn) {
+function makeChooseHandler(index) {
+  return function() {
+    chooseAnswer(index, this);
+  };
+}
+
+function chooseAnswer(i, btn) {
   if (answered) return;
   answered = true;
-  const q = questions[current];
-  document.querySelectorAll(".option")[q.answer].classList.add("correct");
+
+  var q = questions[current];
+  var buttons = document.getElementsByClassName("option");
+  buttons[q.answer].classList.add("correct");
+
   if (i === q.answer) {
-    score++;
-    document.getElementById("feedback").textContent = "答啱晒！👏";
+    score = score + 1;
+    playCorrect();
+    document.getElementById("feedback").innerHTML = "答啱晒！👏";
   } else {
     btn.classList.add("wrong");
-    document.getElementById("feedback").textContent = "唔緊要，綠色就係正確答案。";
+    playWrong();
+    document.getElementById("feedback").innerHTML = "唔緊要，綠色就係正確答案。";
   }
+
   if (current + 1 < questions.length) {
-    document.getElementById("next").classList.remove("hidden");
+    document.getElementById("nextBtn").classList.remove("hidden");
   } else {
-    document.getElementById("restart").classList.remove("hidden");
+    document.getElementById("restartBtn").classList.remove("hidden");
     document.getElementById("homeBtn").classList.remove("hidden");
-    document.getElementById("feedback").textContent = `完成！你答對咗 ${score} / ${questions.length} 題。`;
+    document.getElementById("feedback").innerHTML = "完成！你答對咗 " + score + " / " + questions.length + " 題。";
   }
 }
 
-function nextQuestion() { current++; showQuestion(); }
-function restart() { current = 0; score = 0; showQuestion(); }
+function nextQuestion() {
+  current = current + 1;
+  showQuestion();
+}
+
+function restartGame() {
+  current = 0;
+  score = 0;
+  showQuestion();
+}
+
+function getAudio() {
+  if (!audioCtx) {
+    var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    audioCtx = new AudioContextClass();
+  }
+  if (audioCtx.state === "suspended") {
+    audioCtx.resume();
+  }
+  return audioCtx;
+}
+
+function playTone(freq, delay, duration, wave, volume) {
+  var ctx = getAudio();
+  var osc = ctx.createOscillator();
+  var gain = ctx.createGain();
+  osc.type = wave;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(volume, ctx.currentTime + delay);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + duration);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(ctx.currentTime + delay);
+  osc.stop(ctx.currentTime + delay + duration);
+}
+
+function playCorrect() {
+  playTone(523.25, 0, 0.15, "sine", 0.18);
+  playTone(659.25, 0.12, 0.15, "sine", 0.18);
+  playTone(783.99, 0.24, 0.25, "sine", 0.18);
+}
+
+function playWrong() {
+  playTone(329.63, 0, 0.20, "triangle", 0.14);
+  playTone(261.63, 0.18, 0.30, "triangle", 0.14);
+}
+
+function playSoftChord() {
+  playTone(261.63, 0, 5, "sine", 0.04);
+  playTone(329.63, 1.5, 5, "sine", 0.04);
+  playTone(392.00, 3, 5, "sine", 0.035);
+}
+
+function playMusicLoop() {
+  if (!musicOn) return;
+  playSoftChord();
+  musicTimer = setTimeout(playMusicLoop, 9000);
+}
+
+function toggleMusic() {
+  musicOn = !musicOn;
+  getAudio();
+  if (musicOn) {
+    playMusicLoop();
+  } else if (musicTimer) {
+    clearTimeout(musicTimer);
+    musicTimer = null;
+  }
+}
+
+function stopMusic() {
+  musicOn = false;
+  if (musicTimer) {
+    clearTimeout(musicTimer);
+    musicTimer = null;
+  }
+}
+
+showIntro();
 </script>
 </body>
 </html>
